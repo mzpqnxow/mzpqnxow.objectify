@@ -21,7 +21,8 @@ REQUIRED = ['jinja2', 'ujson']
 
 NAME = '.'.join(NAMESPACE + [PROJECT_NAME])
 ABOUT = {}
-VERSION = '0.0.1a'
+VERSION_LIST = ['0', '0', '1']
+VERSION = '.'.join(VERSION_LIST)
 
 setup(
     version=VERSION,
