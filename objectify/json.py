@@ -11,27 +11,27 @@ from objectify.log import error
 from objectify.encoding import _DEFAULT_ENCODING
 
 
-def objectify_json(path_or_stream,
+def objectify_json(path_buf_stream,
                    encoding=_DEFAULT_ENCODING,
                    from_string=False,
                    ensure_ascii=False,
                    encode_html_chars=False):
     """Return a native Python object from a JSON file path, stream or string"""
     if from_string is True:
-        path_or_stream = StringIO(path_or_stream)
+        path_buf_stream = StringIO(path_buf_stream)
 
-    read = getattr(path_or_stream, 'read', None)
+    read = getattr(path_buf_stream, 'read', None)
 
     if read is not None:
         return load(read(), ensure_ascii=ensure_ascii, encode_html_chars=encode_html_chars)
-    with open(path_or_stream, encoding=encoding) as infd:
+    with open(path_buf_stream, encoding=encoding) as infd:
         try:
             return load(infd, ensure_ascii=ensure_ascii, encode_html_chars=encode_html_chars)
         except Exception as err:
             error(repr(err))
 
 
-def objectify_json_lines(path_or_stream,
+def objectify_json_lines(path_buf_stream,
                          from_string=False,
                          fatal_errors=True,
                          encoding=_DEFAULT_ENCODING,
@@ -39,7 +39,7 @@ def objectify_json_lines(path_or_stream,
                          encode_html_chars=False):
     """Generator return an object for each line of JSON in a file, stream or string
 
-    in: path_or_stream:
+    in: path_buf_stream:
       (str) A string file path containing JSON
       (stream) An open readable stream from a file containing JSON
       (stream) A string of JSON content (also requires `from_string=True`)
@@ -65,15 +65,15 @@ def objectify_json_lines(path_or_stream,
         print(obj.items())
     """
     if from_string is True:
-        # If caller specifies path_or_stream is a string, turn it into
+        # If caller specifies path_buf_stream is a string, turn it into
         # a stream to avoid an extra set of logic below
-        assert isinstance(path_or_stream, str)
-        path_or_stream = StringIO(path_or_stream)
+        assert isinstance(path_buf_stream, str)
+        path_buf_stream = StringIO(path_buf_stream)
 
-    # If path_or_stream has a read method, it is effectively stream
-    reader = getattr(path_or_stream, 'read', None)
+    # If path_buf_stream has a read method, it is effectively stream
+    reader = getattr(path_buf_stream, 'read', None)
 
-    with (path_or_stream if reader else open(path_or_stream, 'r', encoding=encoding)) as infd:
+    with (path_buf_stream if reader else open(path_buf_stream, 'r', encoding=encoding)) as infd:
         for line in infd.readlines():
             line = line.strip()
             # Exception handlers are expensive to set up and even more expensive

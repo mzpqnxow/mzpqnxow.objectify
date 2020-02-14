@@ -4,7 +4,7 @@ from io import StringIO
 from objectify.encoding import _DEFAULT_ENCODING
 
 
-def objectify_lines(path_or_stream,
+def objectify_lines(path_buf_stream,
                     encoding=_DEFAULT_ENCODING,
                     from_string=False, comment=None, unique=False):
     """Return a native Python object from a JSON file path, stream or string
@@ -15,7 +15,7 @@ def objectify_lines(path_or_stream,
     list all at once they can just wrap `list()` around the all, or just a list
     or set comprehension, but this defeats the purpose of the function
 
-    in: path_or_stream:
+    in: path_buf_stream:
       (str) A string file path containing JSON
       (stream) An open readable stream from a file containing JSON
       (stream) A string of JSON content (also requires `from_string=True`)
@@ -54,15 +54,15 @@ def objectify_lines(path_or_stream,
       {line.lower() for line in objectify_lines('file.lst', encoding='utf-8')}
     """
     if from_string is True:
-        # If caller specifies path_or_stream is a string, turn it into
+        # If caller specifies path_buf_stream is a string, turn it into
         # a stream to avoid an extra set of logic below
-        assert isinstance(path_or_stream, str)
-        path_or_stream = StringIO(path_or_stream)
+        assert isinstance(path_buf_stream, str)
+        path_buf_stream = StringIO(path_buf_stream)
 
-    # If path_or_stream has a read method, it is effectively stream
-    reader = getattr(path_or_stream, 'read', None)
+    # If path_buf_stream has a read method, it is effectively stream
+    reader = getattr(path_buf_stream, 'read', None)
 
-    with (path_or_stream if reader else open(path_or_stream, 'r', encoding=encoding)) as infd:
+    with (path_buf_stream if reader else open(path_buf_stream, 'r', encoding=encoding)) as infd:
         if unique is False:
             for line in infd.readlines():
                 line = line.strip()

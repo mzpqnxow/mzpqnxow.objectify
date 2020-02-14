@@ -91,7 +91,7 @@ def _elem_to_internal(element,
     return {elem_tag: cur_dict}
 
 
-def objectify_xml(xmlstring, strip_ns=False, strip_whitespace=True):
+def objectify_xml(path_buf_stream, strip_ns=False, strip_whitespace=True):
     """Convert an XML string into a Python dict suitable for JSON"""
     def _elem2json(elem, strip_ns=True, strip_whitespace=True):
         """Convert an ElementTree or Element into a JSON string"""
@@ -101,7 +101,8 @@ def objectify_xml(xmlstring, strip_ns=False, strip_whitespace=True):
                                  strip_ns=strip_ns,
                                  strip_whitespace=strip_whitespace)
 
-    assert isinstance(xmlstring, str)
+    xmlstring = objectify_read(path_buf_stream)
+
     elem = ET.fromstring(xmlstring)
     return _elem2json(
         elem, strip_ns=strip_ns, strip_whitespace=strip_whitespace)
