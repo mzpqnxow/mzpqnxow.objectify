@@ -1,63 +1,50 @@
-"""Simple i/o wrappers for consistency"""
-from json import (dump as json_dump, load as json_load)
-from sys import (stderr, exc_info as exception_info)
+"""Simple 'raw' read/write functions with basic exception handling"""
 
-_DEFAULT_ENCODING = 'ISO-8859-1'
+from objectify import _DEFAULT_ENCODING, error, error_frame
+from ujson import dump
 
 
-def objectify_open(filename,
-                   mode='r',
-                   encoding=_DEFAULT_ENCODING,
-                   readbuf=None,
-                   readlines=None,
-                   json_object=None,
-                   strip_eol=False):
-    """Wrapper for open with basic exception handling and flags to return file content
+def objectify_read(path_or_stream,
+                   encoding=_DEFAULT_ENCODING):
+    """Wrapper to return str or bytes from a file or stream
 
-    Uses ISO-8859-1 as the default encoding, which is safe for international text
-    Returns a stream when mode is read or write
-    Returns bytes if get_content is True
-    Returns a list of bytes if get_lines is True and get_content
+    path_or_stream: can be a readable stream-like object or a file path
 
     """
-    assert mode[0] in 'rw'
-    if len(
-            list(
-                filter(lambda test: test is not None,
-                       (readbuf, readlines, json_object)))) > 1:
-        stderr.write(
-            'Internal error, buf, lines and obj are mutually exclusive!\n')
-        return None
+    reader = getattr(path_or_stream, 'read', None)
     try:
-        if mode[0] == 'r' and (readbuf, readlines) == (False, False):
-            return open(filename, mode, encoding=encoding)
-        with open(filename, mode, encoding=encoding) as stream:
-            if mode[0] == 'r':
-                if readbuf:
-                    return stream.read()
-                elif readlines:
-                    if strip_eol is True:
-                        return stream.read().splitlines()
-                    return stream.readlines()
-                elif json_object:
-                    return json_load(stream)
-
-            if readbuf:
-                return stream.write(readbuf)
-            if readlines:
-                return stream.writelines(readlines)
-            if json_object:
-                return json_dump(json_object, stream, indent=2)
+        with (path_or_stream if reader else open(path_or_stream, 'r', encoding=encoding)) as infd:
+            return infd.read()
     except OSError as err:
-        stderr.write('Problem {0}ing "{1}"\n'.format(
-            'read' if mode[0] == 'r' else 'writ', filename))
-        stderr.write('OSError({0}): {1}\n'.format(err.errno, err.strerror))
-        exception_info()[0]
-    except ValueError as err:
-        stderr.write('Problem {0}ing "{1}"\n'.format(
-            'read' if mode[0] == 'r' else 'writ', filename))
-        stderr.write(
-            'ValueError when loading "{}", probable invalid encoding="{}"'.format(
-                filename, encoding))
-        exception_info()[0]
-    raise RuntimeError('Out of logic, sorry')
+        error_frame('Problem reading from file')
+        error('OSError({0}): {1}'.format(err.errno, err.strerror))
+    except Exception as err:
+        error_frame(repr(err))
+        exit(1)
+
+
+def objectify_write(path_or_stream,
+                    buf,
+                    as_json=False,
+                    encoding=_DEFAULT_ENCODING):
+    """Wrapper to write str or bytes to a file or stream
+
+    path_or_stream: can be a writable stream-like object or a file path
+
+    """
+    writer = getattr(path_or_stream, 'write', None)
+    try:
+        with (path_or_stream if writer else open(path_or_stream, 'w', encoding=encoding)) as infd:
+            if as_json is True:
+                try:
+                    return dump(buf, infd)
+                except Exception as err:
+                    error_frame('Unable to write JSON to file, invalid JSON?')
+                    exit(1)
+            return infd.write(buf)
+    except OSError as err:
+        error_frame('Problem writing to file')
+        error('OSError({0}): {1}'.format(err.errno, err.strerror))
+    except Exception as err:
+        error_frame(repr(err))
+        exit(1)

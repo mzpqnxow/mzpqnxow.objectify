@@ -2,6 +2,10 @@
 
 A best effort XML to Dict package for Python3, with some additional input types just for convenience. The ordered YaML loader comes in handy at times. This is overall a very underwhelming package, but it's the cleanest way to break out XML to native Python3 datatype functions
 
+## Why not use Pandas or other data libraries?
+
+This is meant to be very lighweight with no "heavy" packages required. For no particular reason other than it was written on a Linux Power8 machine which takes 8 minutes to install Pandas; there is no binary distribution for PPC64, not is Pandas officially "supported", though it does work fine
+
 ## Note about encoding
 
 The default file encoding is `ISO-8859-1`. You can specify the encoding as a keyword argument to `objectify_open()` if you'd like
