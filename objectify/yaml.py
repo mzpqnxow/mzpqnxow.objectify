@@ -30,16 +30,17 @@ from io import StringIO
 
 from yaml import (safe_load as load_yaml_plain, YAMLError as YAMLException)
 
-from objectify import error_frame, error, debug, _DEFAULT_ENCODING
+from objectify.log import error_frame, error, debug
+from objectify.encoding import _DEFAULT_ENCODING
 from objectify.template import recursive_template
 from objectify.io import objectify_read
 
 
 def objectify_yaml(path_buf_stream,
                    from_string=False,
-                   template=False,
+                   template=True,
                    extra_vars=None,
-                   passes=1,
+                   passes=2,
                    user_path_expand=False,
                    encoding=_DEFAULT_ENCODING):
     """Load a YaML file, stream or string into a Python3 object, optionally templating
@@ -84,7 +85,7 @@ def objectify_yaml(path_buf_stream,
 
     """
     if from_string is False:
-        objectify_read(path_buf_stream, encoding=encoding)
+        path_buf_stream = objectify_read(path_buf_stream, encoding=encoding)
 
     first_pass_data = _load_yaml_ordered(path_buf_stream)
     if template is False:
@@ -94,10 +95,13 @@ def objectify_yaml(path_buf_stream,
     # that to the original YaML as if it was a template
     # itself. Allows nested/self-referential templating
     # in YaML files
+    if extra_vars is None:
+        extra_vars = first_pass_data
+
     if isinstance(extra_vars, dict):
         first_pass_data = recursive_template(first_pass_data, extra_vars, user_path_expand=user_path_expand)
     else:
-        error_frame('unable to load template, must be dict()')
+        error_frame('unable to load extra_vars, must be dict()')
         exit(1)
     next_pass_data = first_pass_data
     for _ in range(passes):
@@ -147,6 +151,7 @@ def _load_yaml_ordered(yamlstring):
 
     yamlstring, top_level_keys = _sanity_check(yamlstring)
     yamlfd = StringIO(yamlstring)
+
     # 2nd pass to set up the OrderedDict
     try:
         dict_tmp = load_yaml_plain(yamlfd)

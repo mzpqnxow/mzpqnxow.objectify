@@ -24,8 +24,6 @@ from objectify.io import (
     objectify_read,
     objectify_write)
 
-_DEVELOPMENT_MODE = False  # Use to test untested functionality
-
 
 def _elem_to_internal(element,
                       strip_ns=True,

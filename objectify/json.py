@@ -7,7 +7,8 @@ from io import StringIO
 
 from ujson import loads, load
 
-from objectify import _DEFAULT_ENCODING, error
+from objectify.log import error
+from objectify.encoding import _DEFAULT_ENCODING
 
 
 def objectify_json(path_or_stream,

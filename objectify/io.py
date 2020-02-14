@@ -1,6 +1,7 @@
 """Simple 'raw' read/write functions with basic exception handling"""
 
-from objectify import _DEFAULT_ENCODING, error, error_frame
+from objectify.encoding import _DEFAULT_ENCODING
+from objectify.log import error, error_frame
 from ujson import dump
 
 
@@ -14,7 +15,8 @@ def objectify_read(path_or_stream,
     reader = getattr(path_or_stream, 'read', None)
     try:
         with (path_or_stream if reader else open(path_or_stream, 'r', encoding=encoding)) as infd:
-            return infd.read()
+            buf = infd.read()
+            return buf
     except OSError as err:
         error_frame('Problem reading from file')
         error('OSError({0}): {1}'.format(err.errno, err.strerror))

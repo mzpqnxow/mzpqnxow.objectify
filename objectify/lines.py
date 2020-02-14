@@ -1,7 +1,7 @@
 """Nonsense"""
 from io import StringIO
 
-from objectify import _DEFAULT_ENCODING
+from objectify.encoding import _DEFAULT_ENCODING
 
 
 def objectify_lines(path_or_stream,
