@@ -1,0 +1,4 @@
+# Testing
+---
+root: ~/
+ssh: "{{ root }}/.ssh"
