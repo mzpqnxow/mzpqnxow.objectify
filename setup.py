@@ -17,7 +17,7 @@ URL = 'https://github.com/mzpqnxow/objectify'
 EMAIL = 'copyright@mzpqnxow'
 AUTHOR = 'mzpqnxow'
 LICENSE = 'BSD 3-Clause'
-REQUIRED = []
+REQUIRED = ['jinja2', 'ujson']
 
 NAME = '.'.join(NAMESPACE + [PROJECT_NAME])
 ABOUT = {}
