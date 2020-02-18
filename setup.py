@@ -10,7 +10,7 @@ from setuptools import (
     find_packages)
 
 CURDIR = abspath(dirname(__file__))
-# NAMESPACE = ['mzpqnxow']
+NAMESPACE = ['mzpqnxow']
 PACKAGE = 'objectify'
 PROJECT_NAME = '{}'.format(PACKAGE)
 DESCRIPTION = 'A package containing common reusable functions and classes'
@@ -20,7 +20,7 @@ AUTHOR = 'mzpqnxow'
 LICENSE = 'BSD 3-Clause'
 REQUIRED = ['jinja2', 'ujson']
 
-# NAME = '.'.join(NAMESPACE + [PROJECT_NAME])
+NAME = '.'.join(NAMESPACE + [PROJECT_NAME])
 NAME = PROJECT_NAME
 ABOUT = {}
 
