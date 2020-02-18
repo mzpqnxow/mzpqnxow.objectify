@@ -80,12 +80,12 @@ def objectify_json_lines(path_buf_stream,
             # when they fire. If errors should be fatal, don't bother setting one
             # up at all
             if fatal_errors is True:
-                yield loads(line, ensure_ascii=ensure_ascii, encode_html_chars=encode_html_chars)
+                yield loads(line)
             else:
                 # The more expensive path, preparing to catch an exception and
                 # continue gracefully if fatal_errors is False
                 try:
-                    yield loads(line, ensure_ascii=ensure_ascii, encode_html_chars=encode_html_chars)
+                    yield loads(line)
                 except Exception as err:
                     error('bad JSON-line line: {}'.format(repr(err)))
                     continue

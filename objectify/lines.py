@@ -62,13 +62,15 @@ def objectify_lines(path_buf_stream,
     # If path_buf_stream has a read method, it is effectively stream
     reader = getattr(path_buf_stream, 'read', None)
 
+    if unique is True:
+        raise RuntimeError('Unable to enforce uniqueness when using a generator')
+
     with (path_buf_stream if reader else open(path_buf_stream, 'r', encoding=encoding)) as infd:
-        if unique is False:
-            for line in infd.readlines():
-                line = line.strip()
-                if comment:
-                    if line[0] == comment:
-                        continue
-                    comment_loc = line.rfind(comment)
-                    line = line[0:comment_loc].strip()
-                yield line
+        for line in infd.readlines():
+            line = line.strip()
+            if comment:
+                if line[0] == comment:
+                    continue
+                comment_loc = line.rfind(comment)
+                line = line[0:comment_loc].strip()
+            yield line
