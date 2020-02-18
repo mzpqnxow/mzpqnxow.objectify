@@ -1,6 +1,7 @@
 #!/usr/bin/env python3
 # -*- mode:python; tab-width: 4; coding: utf-8 -*-
 from __future__ import print_function
+import versioneer
 from os.path import (
     abspath,
     dirname)
@@ -21,11 +22,10 @@ REQUIRED = ['jinja2', 'ujson']
 
 NAME = '.'.join(NAMESPACE + [PROJECT_NAME])
 ABOUT = {}
-VERSION_LIST = ('0', '0', '2')
-VERSION = '.'.join(VERSION_LIST)
 
 setup(
-    version=VERSION,
+    version=versioneer.get_version(),
+    cmdclass=versioneer.get_cmdclass(),
     name=NAME,
     packages=find_packages(),
     install_requires=REQUIRED,
