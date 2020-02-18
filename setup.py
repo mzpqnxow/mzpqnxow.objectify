@@ -9,19 +9,19 @@ from setuptools import (
     find_packages)
 
 CURDIR = abspath(dirname(__file__))
-NAMESPACE = []
+NAMESPACE = ('mzpqnxow', )
 PACKAGE = 'objectify'
-PROJECT_NAME = 'py{}'.format(PACKAGE)
+PROJECT_NAME = '{}'.format(PACKAGE)
 DESCRIPTION = 'A package containing common reusable functions and classes'
 URL = 'https://github.com/mzpqnxow/objectify'
-EMAIL = 'copyright@mzpqnxow'
+EMAIL = 'copyright@mzpqnxow.com'
 AUTHOR = 'mzpqnxow'
 LICENSE = 'BSD 3-Clause'
 REQUIRED = ['jinja2', 'ujson']
 
 NAME = '.'.join(NAMESPACE + [PROJECT_NAME])
 ABOUT = {}
-VERSION_LIST = ['0', '0', '1']
+VERSION_LIST = ('0', '0', '2')
 VERSION = '.'.join(VERSION_LIST)
 
 setup(
