@@ -23,3 +23,7 @@ logging.getLogger(__name__).addHandler(NullHandler())
 
 __all__ = ['objectify_json', 'objectify_xml', 'objectify_yaml',
            'objectify_json_lines', 'objectify_read', 'objectify_write']
+
+from ._version import get_versions
+__version__ = get_versions()['version']
+del get_versions
