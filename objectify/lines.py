@@ -7,7 +7,7 @@ from objectify.encoding import _DEFAULT_ENCODING
 def objectify_lines(path_buf_stream,
                     encoding=_DEFAULT_ENCODING,
                     from_string=False, comment=None, unique=False):
-    """Return a native Python object from a JSON file path, stream or string
+    """Return a native Python object from a line-based file
 
     This function is specifically to minimize memory usage, suitable for processing
     VERY large files without causing memory pressure by implementing as a generator
@@ -29,7 +29,7 @@ def objectify_lines(path_buf_stream,
 
     Examples:
 
-      for obj in objectify_lines('file.json', encoding='utf-8'):
+      for obj in objectify_lines('lines.lst', encoding='utf-8'):
         print(line)
 
       lines_fd = open('lines.lst', 'r', encoding='utf-8')
@@ -45,13 +45,13 @@ def objectify_lines(path_buf_stream,
     comprehension:
 
     Build one large list all at once:
-      list(objectify_lines('file.lst', encoding='utf-8'))
+      list(objectify_lines('lines.lst', encoding='utf-8'))
 
     Alternately, use a list comprehension for transforming lines along the way:
-      [line.upper() for line in objectify_lines('file.lst', encoding='utf-8')]
+      [line.upper() for line in objectify_lines('lines.lst', encoding='utf-8')]
 
     To perform an unique, use a set comprehension:
-      {line.lower() for line in objectify_lines('file.lst', encoding='utf-8')}
+      {line.lower() for line in objectify_lines('lines.lst', encoding='utf-8')}
     """
     if from_string is True:
         # If caller specifies path_buf_stream is a string, turn it into

@@ -21,7 +21,6 @@ LICENSE = 'BSD 3-Clause'
 REQUIRED = ['jinja2', 'ujson']
 
 NAME = '.'.join(NAMESPACE + [PROJECT_NAME])
-NAME = PROJECT_NAME
 ABOUT = {}
 
 setup(
