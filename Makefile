@@ -25,3 +25,6 @@ endif
 	git tag -a `echo $(v) | awk -F. -v OFS=. -v f=$(f) '{ $$f++ } 1'` && \
 	git commit -am "Bumped to version `echo $(v) | awk -F. -v OFS=. -v f=$(f) '{ $$f++ } 1'`" || /bin/true
 	git push --tags
+
+clean:
+	rm -f *.json *.yml *.xml *.lst *.csv
