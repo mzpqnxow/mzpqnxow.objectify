@@ -6,7 +6,8 @@ from objectify.encoding import _DEFAULT_ENCODING
 
 def objectify_lines(path_buf_stream,
                     encoding=_DEFAULT_ENCODING,
-                    from_string=False, comment=None, unique=False):
+                    from_string=False, comment=None, unique=False,
+                    avoid_memory_pressure=True):
     """Return a native Python object from a line-based file
 
     This function is specifically to minimize memory usage, suitable for processing
@@ -66,6 +67,9 @@ def objectify_lines(path_buf_stream,
         raise RuntimeError('Unable to enforce uniqueness when using a generator')
 
     with (path_buf_stream if reader else open(path_buf_stream, 'r', encoding=encoding)) as infd:
+        if avoid_memory_pressure is False:
+            obj_lines = list()
+
         for line in infd.readlines():
             line = line.strip()
             if comment:
@@ -73,4 +77,11 @@ def objectify_lines(path_buf_stream,
                     continue
                 comment_loc = line.rfind(comment)
                 line = line[0:comment_loc].strip()
-            yield line
+            if avoid_memory_pressure is True:
+                yield line
+            else:
+                obj_lines.append(line)
+        return obj_lines
+
+
+
