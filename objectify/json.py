@@ -6,6 +6,7 @@ To write JSON, use objectify_write with as_json=True
 from io import StringIO
 
 from ujson import loads, load
+from json import JSONDecodeError
 
 from objectify.log import error
 from objectify.encoding import _DEFAULT_ENCODING
@@ -36,7 +37,8 @@ def objectify_json_lines(path_buf_stream,
                          fatal_errors=True,
                          encoding=_DEFAULT_ENCODING,
                          ensure_ascii=False,
-                         encode_html_chars=False):
+                         encode_html_chars=False,
+                         avoid_memory_pressure=True):
     """Generator return an object for each line of JSON in a file, stream or string
 
     in: path_buf_stream:
@@ -74,6 +76,25 @@ def objectify_json_lines(path_buf_stream,
     reader = getattr(path_buf_stream, 'read', None)
 
     with (path_buf_stream if reader else open(path_buf_stream, 'r', encoding=encoding)) as infd:
+        # If the user doesn't care about memory pressure, don't bother with a generator, just
+        # give them a regular list of objects from the JSON lines file. I guess most of the time
+        # nobody cares, and have to work with a generator in Python3 can be annoying for the caller
+        if avoid_memory_pressure is False:
+            if fatal_errors is True:
+                try:
+                    return [loads(line) for line in infd.read.splitlines() if line]
+                except JSONDecodeError:
+                    return None
+            obj_list = list()
+            for line in infd.read.splitlines():
+                try:
+                    obj = loads(line)
+                    obj_list.append(obj)
+                except JSONDecodeError:
+                    # Silently ignore bad lines ..
+                    continue
+            return obj_list
+
         for line in infd.readlines():
             line = line.strip()
             # Exception handlers are expensive to set up and even more expensive
