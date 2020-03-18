@@ -15,6 +15,9 @@ Useful for:
   - Converting an XML stream into a JSON stream
 
 Beware of memory pressure on extremely large XML files!
+
+There is a very basic improvement that needs to be done here, but it is a
+mindfck to do ... so it will wait for now
 """
 from sys import argv
 from collections import OrderedDict

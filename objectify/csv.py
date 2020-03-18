@@ -14,6 +14,7 @@ from objectify.encoding import _DEFAULT_ENCODING
 def objectify_csv(path_buf_stream,
                   encoding=_DEFAULT_ENCODING,
                   header=True, quotechar='"', escapechar=None,
+                  avoid_memory_pressure=False,
                   from_string=False, index_row=0, sep=',', unique=False):
     """Return a native Python object from a CSV file path, stream or string
 
@@ -61,8 +62,7 @@ def objectify_csv(path_buf_stream,
     To perform an unique, use a set comprehension:
       {line.lower() for line in objectify_lines('file.lst', encoding='utf-8')}
     """
-    input('kkkk called this')
-    if unique is True:
+    if unique is True and avoid_memory_pressure is True:
         raise RuntimeError('Unable to enforce uniqueness when using a generator')
     if from_string is True:
         # If caller specifies path_buf_stream is a string, turn it into
@@ -78,5 +78,9 @@ def objectify_csv(path_buf_stream,
 
     with (path_buf_stream if reader else open(path_buf_stream, 'r', encoding=encoding)) as infd:
         dict_reader = DictReader(infd)
-        for row in dict_reader:
-            yield dict(row)
+        if avoid_memory_pressure is True:
+            for row in dict_reader:
+                yield dict(row)
+        else:
+            return dict(dict_reader)
+
